@@ -1,14 +1,12 @@
-import type { AnyStringSerializableType } from 'yaschema-api';
-
-import type { ApiResponse } from '../../types/ApiResponse';
+import type { AnyBody, AnyHeaders, AnyStatus, ApiResponse } from 'yaschema-api';
 
 export type ApiFetchResult<
-  ResStatusT extends number,
-  ResHeadersT extends Record<string, AnyStringSerializableType>,
-  ResBodyT,
-  ErrResStatusT extends number,
-  ErrResHeadersT extends Record<string, AnyStringSerializableType>,
-  ErrResBodyT
+  ResStatusT extends AnyStatus,
+  ResHeadersT extends AnyHeaders,
+  ResBodyT extends AnyBody,
+  ErrResStatusT extends AnyStatus,
+  ErrResHeadersT extends AnyHeaders,
+  ErrResBodyT extends AnyBody
 > = (
   | ({ ok: true; error?: undefined } & ApiResponse<ResStatusT, ResHeadersT, ResBodyT>)
   | ({ ok: false; error?: undefined } & ApiResponse<ErrResStatusT, ErrResHeadersT, ErrResBodyT>)

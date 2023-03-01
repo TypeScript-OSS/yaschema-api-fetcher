@@ -1,10 +1,9 @@
 import _ from 'lodash';
-import type { SingleOrArray, ValidationMode } from 'yaschema';
-import type { AnyStringSerializableType, HttpApi } from 'yaschema-api';
+import type { ValidationMode } from 'yaschema';
+import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, HttpApi } from 'yaschema-api';
 
 import { getFetch } from '../../config/fetch';
 import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } from '../../config/validation-mode';
-import type { ApiRequest } from '../../types/ApiRequest';
 import type { ApiFetchResult } from '../types/ApiFetchResult';
 import { generateApiFetchResultFromFetchResponse } from './generate-api-fetch-result-from-fetch-response';
 import { FetchRequirementsError, generateFetchRequirementsFromApiFetchRequest } from './generate-fetch-requirements-from-api-fetch-request';
@@ -31,16 +30,16 @@ export interface ApiFetchOptions {
 
 /** Uses `fetch` to access the specified API */
 export const apiFetch = async <
-  ReqHeadersT extends Record<string, AnyStringSerializableType>,
-  ReqParamsT extends Record<string, AnyStringSerializableType>,
-  ReqQueryT extends Record<string, SingleOrArray<AnyStringSerializableType>>,
-  ReqBodyT,
-  ResStatusT extends number,
-  ResHeadersT extends Record<string, AnyStringSerializableType>,
-  ResBodyT,
-  ErrResStatusT extends number,
-  ErrResHeadersT extends Record<string, AnyStringSerializableType>,
-  ErrResBodyT
+  ReqHeadersT extends AnyHeaders,
+  ReqParamsT extends AnyParams,
+  ReqQueryT extends AnyQuery,
+  ReqBodyT extends AnyBody,
+  ResStatusT extends AnyStatus,
+  ResHeadersT extends AnyHeaders,
+  ResBodyT extends AnyBody,
+  ErrResStatusT extends AnyStatus,
+  ErrResHeadersT extends AnyHeaders,
+  ErrResBodyT extends AnyBody
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>,

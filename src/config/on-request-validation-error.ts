@@ -1,6 +1,4 @@
-import type { GenericHttpApi } from 'yaschema-api';
-
-import type { GenericApiRequest } from '../types/GenericApiRequest';
+import type { GenericApiRequest, GenericHttpApi } from 'yaschema-api';
 
 interface OnRequestValidationErrorHandlerArgs {
   api: GenericHttpApi;

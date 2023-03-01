@@ -1,15 +1,25 @@
-import type { SingleOrArray, ValidationMode } from 'yaschema';
+import type { ValidationMode } from 'yaschema';
 import { schema } from 'yaschema';
-import type { AnyStringSerializableType, GenericHttpApi, HttpApi, ResponseSchemas } from 'yaschema-api';
+import type {
+  AnyBody,
+  AnyHeaders,
+  AnyParams,
+  AnyQuery,
+  AnyStatus,
+  ApiRequest,
+  ApiResponse,
+  GenericApiRequest,
+  GenericApiResponse,
+  GenericHttpApi,
+  HttpApi,
+  ResponseSchemas
+} from 'yaschema-api';
+import { checkResponseValidation } from 'yaschema-api';
 
 import { triggerOnResponseValidationErrorHandler } from '../../config/on-response-validation-error';
-import { checkResponseValidation } from '../../internal-utils/check-response-validation';
 import { convertHeadersFromFetchResponse } from '../../internal-utils/convert-headers-from-fetch-response';
 import { getBestResponseContentByType } from '../../internal-utils/get-best-response-content-by-type';
 import { isFailureResponseSchemaSpecified } from '../../internal-utils/is-failure-response-schema-specified';
-import type { ApiRequest } from '../../types/ApiRequest';
-import type { ApiResponse } from '../../types/ApiResponse';
-import type { GenericApiResponse } from '../../types/GenericApiResponse';
 import type { ApiFetchResult } from '../exports';
 import type { SupportedHttpResponseType } from './is-unsupported-http-response-type';
 
@@ -26,16 +36,16 @@ const anyResBodySchema = schema.any().allowNull().optional();
 /** Checks the response returned by `fetch`, comparing it with the success and failure schemas, and generates the most-appropriate
  * `ApiFetchResult` */
 export const generateApiFetchResultFromFetchResponse = async <
-  ReqHeadersT extends Record<string, AnyStringSerializableType>,
-  ReqParamsT extends Record<string, AnyStringSerializableType>,
-  ReqQueryT extends Record<string, SingleOrArray<AnyStringSerializableType>>,
-  ReqBodyT,
-  ResStatusT extends number,
-  ResHeadersT extends Record<string, AnyStringSerializableType>,
-  ResBodyT,
-  ErrResStatusT extends number,
-  ErrResHeadersT extends Record<string, AnyStringSerializableType>,
-  ErrResBodyT
+  ReqHeadersT extends AnyHeaders,
+  ReqParamsT extends AnyParams,
+  ReqQueryT extends AnyQuery,
+  ReqBodyT extends AnyBody,
+  ResStatusT extends AnyStatus,
+  ResHeadersT extends AnyHeaders,
+  ResBodyT extends AnyBody,
+  ErrResStatusT extends AnyStatus,
+  ErrResHeadersT extends AnyHeaders,
+  ErrResBodyT extends AnyBody
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>,
@@ -51,9 +61,9 @@ export const generateApiFetchResultFromFetchResponse = async <
   const responseType = (api.responseType ?? 'json') as SupportedHttpResponseType;
 
   const checkFetchResponseContentAgainstSchema = async <
-    ResStatusT extends number,
-    ResHeadersT extends Record<string, AnyStringSerializableType>,
-    ResBodyT
+    ResStatusT extends AnyStatus,
+    ResHeadersT extends AnyHeaders,
+    ResBodyT extends AnyBody
   >(
     schemas: ResponseSchemas<ResStatusT, ResHeadersT, ResBodyT>,
     fetchResBody: any
@@ -87,7 +97,7 @@ export const generateApiFetchResultFromFetchResponse = async <
     };
 
     if (validationMode !== 'none') {
-      const checkedResponseValidation = checkResponseValidation({ resHeaders, resBody, validationMode: validationMode });
+      const checkedResponseValidation = checkResponseValidation({ resStatus, resHeaders, resBody, validationMode: validationMode });
       if (!checkedResponseValidation.ok) {
         return checkedResponseValidation;
       } else if (checkedResponseValidation.hadSoftValidationError) {
@@ -119,20 +129,20 @@ export const generateApiFetchResultFromFetchResponse = async <
   const successCase = (success: Success & { ok: true }): { ok: true; fetchRes: Response } & (typeof success)['res'] => {
     triggerOnResponseValidationErrorHandler({
       api: api as any as GenericHttpApi,
-      req,
-      res: success.res,
+      req: req as GenericApiRequest,
+      res: success.res as GenericApiResponse,
       fetchRes,
       invalidPart: success.invalidPart,
       validationError: success.validationError
     });
 
-    return { ok: true, ...success.res, fetchRes };
+    return { ok: true, fetchRes, ...success.res };
   };
 
   const hardErrorCase = (success: Success): { ok: false; error: string; fetchRes: Response } => {
     triggerOnResponseValidationErrorHandler({
       api: api as any as GenericHttpApi,
-      req,
+      req: req as GenericApiRequest,
       res: undefined,
       fetchRes,
       invalidPart: success.invalidPart,
@@ -159,15 +169,15 @@ export const generateApiFetchResultFromFetchResponse = async <
       if (failure.invalidPart !== undefined) {
         triggerOnResponseValidationErrorHandler({
           api: api as any as GenericHttpApi,
-          req,
-          res: failure.res,
+          req: req as GenericApiRequest,
+          res: failure.res as GenericApiResponse,
           fetchRes,
           invalidPart: failure.invalidPart,
           validationError: failure.validationError
         });
       }
 
-      return { ok: false, ...failure.res, fetchRes };
+      return { ok: false, fetchRes, ...failure.res };
     };
 
     if (failure.ok) {

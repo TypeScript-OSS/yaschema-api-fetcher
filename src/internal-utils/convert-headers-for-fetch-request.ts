@@ -1,8 +1,8 @@
-import type { AnyStringSerializableType } from 'yaschema-api';
+import type { AnyHeaders } from 'yaschema-api';
 
 /** Converts headers from the format expected by yaschema-api to the format expected by `fetch` */
-export const convertHeadersForFetchRequest = (headers: Record<string, AnyStringSerializableType>) => {
-  const output = Object.entries(headers).reduce((out: Record<string, string>, [key, value]) => {
+export const convertHeadersForFetchRequest = (headers: AnyHeaders) => {
+  const output = Object.entries(headers ?? {}).reduce((out: Record<string, string>, [key, value]) => {
     if (value === null || value === undefined) {
       return out; // Skipping
     }

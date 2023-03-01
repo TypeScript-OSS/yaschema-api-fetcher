@@ -1,11 +1,10 @@
-import type { SingleOrArray } from 'yaschema';
-import type { AnyStringSerializableType } from 'yaschema-api';
+import type { AnyQuery } from 'yaschema-api';
 
 /** Converts a yaschema-api query value into a query string, which can be used in a URL */
-export const makeQueryString = (query: Record<string, SingleOrArray<AnyStringSerializableType>>) => {
+export const makeQueryString = (query: AnyQuery) => {
   const output: string[] = [];
 
-  for (const [key, value] of Object.entries(query)) {
+  for (const [key, value] of Object.entries(query ?? {})) {
     if (value === null || value === undefined) {
       continue; // Skipping
     }

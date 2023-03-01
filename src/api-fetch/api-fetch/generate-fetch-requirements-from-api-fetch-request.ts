@@ -1,15 +1,23 @@
 import _ from 'lodash';
-import type { SingleOrArray, ValidationMode } from 'yaschema';
+import type { ValidationMode } from 'yaschema';
 import { schema } from 'yaschema';
-import type { AnyStringSerializableType, GenericHttpApi, HttpApi } from 'yaschema-api';
-import { getUrlBaseForRouteType } from 'yaschema-api';
+import type {
+  AnyBody,
+  AnyHeaders,
+  AnyParams,
+  AnyQuery,
+  AnyStatus,
+  ApiRequest,
+  GenericApiRequest,
+  GenericHttpApi,
+  HttpApi
+} from 'yaschema-api';
+import { checkRequestValidation, getUrlBaseForRouteType } from 'yaschema-api';
 
 import { triggerOnRequestValidationErrorHandler } from '../../config/on-request-validation-error';
-import { checkRequestValidation } from '../../internal-utils/check-request-validation';
 import { convertHeadersForFetchRequest } from '../../internal-utils/convert-headers-for-fetch-request';
 import { makeQueryString } from '../../internal-utils/make-query-string';
 import { populateParamMarkersInUrl } from '../../internal-utils/populate-param-markers-in-url';
-import type { ApiRequest } from '../../types/ApiRequest';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.number().setAllowedSerializationForms(['number', 'string']),
@@ -17,12 +25,11 @@ const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.string()
 );
 
-const anyReqHeadersSchema = schema.record(schema.string(), anyStringSerializableTypeSchema);
-const anyReqParamsSchema = schema.record(schema.string(), anyStringSerializableTypeSchema);
-const anyReqQuerySchema = schema.record(
-  schema.string(),
-  schema.oneOf(anyStringSerializableTypeSchema, schema.array({ items: anyStringSerializableTypeSchema }))
-);
+const anyReqHeadersSchema = schema.record(schema.string(), anyStringSerializableTypeSchema).optional();
+const anyReqParamsSchema = schema.record(schema.string(), anyStringSerializableTypeSchema).optional();
+const anyReqQuerySchema = schema
+  .record(schema.string(), schema.oneOf(anyStringSerializableTypeSchema, schema.array({ items: anyStringSerializableTypeSchema })))
+  .optional();
 const anyReqBodySchema = schema.any().allowNull().optional();
 
 export class FetchRequirementsError extends Error {
@@ -34,16 +41,16 @@ export class FetchRequirementsError extends Error {
 /** Generates the requirements needed to call `fetch`.  If the request shouldn't be made because of an error, this throws a
  * `FetchRequirementsError` */
 export const generateFetchRequirementsFromApiFetchRequest = async <
-  ReqHeadersT extends Record<string, AnyStringSerializableType>,
-  ReqParamsT extends Record<string, AnyStringSerializableType>,
-  ReqQueryT extends Record<string, SingleOrArray<AnyStringSerializableType>>,
-  ReqBodyT,
-  ResStatusT extends number,
-  ResHeadersT extends Record<string, AnyStringSerializableType>,
-  ResBodyT,
-  ErrResStatusT extends number,
-  ErrResHeadersT extends Record<string, AnyStringSerializableType>,
-  ErrResBodyT
+  ReqHeadersT extends AnyHeaders,
+  ReqParamsT extends AnyParams,
+  ReqQueryT extends AnyQuery,
+  ReqBodyT extends AnyBody,
+  ResStatusT extends AnyStatus,
+  ResHeadersT extends AnyHeaders,
+  ResBodyT extends AnyBody,
+  ErrResStatusT extends AnyStatus,
+  ErrResHeadersT extends AnyHeaders,
+  ErrResBodyT extends AnyBody
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>,
@@ -68,12 +75,12 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
       reqParams,
       reqQuery,
       reqBody,
-      validationMode: validationMode
+      validationMode
     });
     if (!checkedRequestValidation.ok || checkedRequestValidation.hadSoftValidationError) {
       triggerOnRequestValidationErrorHandler({
         api: api as any as GenericHttpApi,
-        req,
+        req: req as GenericApiRequest,
         invalidPart: checkedRequestValidation.invalidPart,
         validationError: checkedRequestValidation.validationError
       });
@@ -85,16 +92,16 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
     }
   }
 
-  const queryString = makeQueryString((reqQuery.serialized ?? {}) as Record<string, SingleOrArray<AnyStringSerializableType>>);
+  const queryString = makeQueryString(reqQuery.serialized as AnyQuery);
   let paramPopulatedUrl: string;
   try {
-    paramPopulatedUrl = populateParamMarkersInUrl(api.url, (reqParams.serialized ?? {}) as Record<string, AnyStringSerializableType>);
+    paramPopulatedUrl = populateParamMarkersInUrl(api.url, reqParams.serialized as AnyParams);
   } catch (e) {
     throw new FetchRequirementsError(_.get(e, 'message') ?? '');
   }
   const constructedUrl = `${paramPopulatedUrl}${queryString.length > 0 ? '?' : ''}${queryString}`;
 
-  const convertedHeaders = convertHeadersForFetchRequest((reqHeaders.serialized ?? {}) as Record<string, AnyStringSerializableType>);
+  const convertedHeaders = convertHeadersForFetchRequest(reqHeaders.serialized as AnyHeaders);
   const stringifiedBody = reqBody.serialized !== undefined ? JSON.stringify(reqBody.serialized) : undefined;
 
   const urlBase = getUrlBaseForRouteType(api.routeType);
