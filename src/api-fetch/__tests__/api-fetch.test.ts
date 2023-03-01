@@ -32,7 +32,7 @@ describe('apiFetch', () => {
       return;
     }
 
-    expect(res.body.black).toBe('#000000');
+    expect(res.body?.black).toBe('#000000');
   });
 
   it('validation should work', async () => {
