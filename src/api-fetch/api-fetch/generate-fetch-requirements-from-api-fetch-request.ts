@@ -57,16 +57,16 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
   { validationMode }: { validationMode: ValidationMode }
 ): Promise<{ url: URL; headers: Record<string, string>; body: string | undefined }> => {
   const [reqHeaders, reqParams, reqQuery, reqBody] = await Promise.all([
-    await (api.schemas.request.headers ?? anyReqHeadersSchema).serializeAsync((req.headers ?? {}) as ReqHeadersT, {
+    (api.schemas.request.headers ?? anyReqHeadersSchema).serializeAsync((req.headers ?? {}) as ReqHeadersT, {
       validation: validationMode
     }),
-    await (api.schemas.request.params ?? anyReqParamsSchema).serializeAsync((req.params ?? {}) as ReqParamsT, {
+    (api.schemas.request.params ?? anyReqParamsSchema).serializeAsync((req.params ?? {}) as ReqParamsT, {
       validation: validationMode
     }),
-    await (api.schemas.request.query ?? anyReqQuerySchema).serializeAsync((req.query ?? {}) as ReqQueryT, {
+    (api.schemas.request.query ?? anyReqQuerySchema).serializeAsync((req.query ?? {}) as ReqQueryT, {
       validation: validationMode
     }),
-    await (api.schemas.request.body ?? anyReqBodySchema).serializeAsync(req.body as ReqBodyT, { validation: validationMode })
+    (api.schemas.request.body ?? anyReqBodySchema).serializeAsync(req.body as ReqBodyT, { validation: validationMode })
   ]);
 
   if (validationMode !== 'none') {

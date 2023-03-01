@@ -82,10 +82,10 @@ export const generateApiFetchResultFromFetchResponse = async <
     }
 
     const [resHeaders, resBody] = await Promise.all([
-      await (schemas.headers ?? anyResHeadersSchema).deserializeAsync(convertHeadersFromFetchResponse(fetchRes.headers), {
+      (schemas.headers ?? anyResHeadersSchema).deserializeAsync(convertHeadersFromFetchResponse(fetchRes.headers), {
         validation: validationMode
       }),
-      await (schemas.body ?? anyResBodySchema).deserializeAsync(fetchResBody, {
+      (schemas.body ?? anyResBodySchema).deserializeAsync(fetchResBody, {
         validation: validationMode
       })
     ]);
