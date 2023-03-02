@@ -20,7 +20,7 @@ import { triggerOnResponseValidationErrorHandler } from '../../config/on-respons
 import { convertHeadersFromFetchResponse } from '../../internal-utils/convert-headers-from-fetch-response';
 import { getBestResponseContentByType } from '../../internal-utils/get-best-response-content-by-type';
 import { isFailureResponseSchemaSpecified } from '../../internal-utils/is-failure-response-schema-specified';
-import type { ApiFetchResult } from '../exports';
+import type { ApiFetchResult } from '../types/ApiFetchResult';
 import type { SupportedHttpResponseType } from './is-unsupported-http-response-type';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
