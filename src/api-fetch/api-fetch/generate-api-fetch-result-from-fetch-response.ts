@@ -114,8 +114,13 @@ export const generateApiFetchResultFromFetchResponse = async <
     return { ok: true, res, hadSoftValidationError: false };
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const fetchResBody = await getBestResponseContentByType(responseType, fetchRes);
+  let fetchResBody: any;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    fetchResBody = await getBestResponseContentByType(responseType, fetchRes);
+  } catch (e) {
+    // Ignoring, this is usually due to an empty JSON body
+  }
 
   const success = await checkFetchResponseContentAgainstSchema(api.schemas.successResponse, fetchResBody);
   if (success.ok && !success.hadSoftValidationError) {
