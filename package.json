@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",
@@ -32,10 +32,10 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "yaschema": "^2.0.3",
-    "yaschema-api": "^2.0.2"
+    "yaschema-api": "^2.0.3"
   },
   "devDependencies": {
-    "@types/jest": "^29.4.4",
+    "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.191",
     "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
@@ -55,6 +55,6 @@
     "trash-cli": "5.0.0",
     "ts-jest": "^29.0.3",
     "typedoc": "^0.23.27",
-    "typescript": "4.9.5"
+    "typescript": "5.0.2"
   }
 }
