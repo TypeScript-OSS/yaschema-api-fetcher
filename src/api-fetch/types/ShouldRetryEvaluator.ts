@@ -17,13 +17,13 @@ export type ShouldRetryEvaluator<
 > = (api: {
   api: Api<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>;
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>;
-  res: ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>;
+  res: ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT> | undefined;
   retryCount: number;
 }) => Promise<false | { afterDelayMSec: number; wasCanceled?: () => void }>;
 
 export type GenericShouldRetryEvaluator = (api: {
   api: GenericApi;
   req: GenericApiRequest;
-  res: GenericApiFetchResult;
+  res: GenericApiFetchResult | undefined;
   retryCount: number;
 }) => Promise<false | { afterDelayMSec: number; wasCanceled?: () => void }>;

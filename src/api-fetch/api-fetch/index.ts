@@ -104,19 +104,30 @@ export const apiFetch = async <
       ...fetchOptions
     };
 
-    let res: ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>;
+    const shouldRetryEvaluator: GenericShouldRetryEvaluator | undefined =
+      (shouldRetry as any as GenericShouldRetryEvaluator) ?? getDefaultShouldRetryEvaluator();
+
+    let res: ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT> | undefined;
     let willRetry = false;
     let retryCount = 0;
+    let lastError = 'Unknown error';
     do {
+      res = undefined;
       willRetry = false;
 
-      const fetchRes = await fetch(url, combinedFetchOptions);
+      let fetchRes: Response | undefined;
+      try {
+        fetchRes = await fetch(url, combinedFetchOptions);
+      } catch (e) {
+        // Usually when the server is unreachable
+        lastError = e instanceof Error ? e.message : lastError;
+      }
 
-      res = await generateApiFetchResultFromFetchResponse(api, req, { fetchRes, validationMode: responseValidationMode });
+      if (fetchRes !== undefined) {
+        res = await generateApiFetchResultFromFetchResponse(api, req, { fetchRes, validationMode: responseValidationMode });
+      }
 
-      if (!res.ok) {
-        const shouldRetryEvaluator: GenericShouldRetryEvaluator | undefined =
-          (shouldRetry as any as GenericShouldRetryEvaluator) ?? getDefaultShouldRetryEvaluator();
+      if (res === undefined || !res.ok) {
         const shouldRetryResult = (await shouldRetryEvaluator?.({ api: api as any as GenericApi, req, res, retryCount })) ?? false;
         retryCount += 1;
 
@@ -129,7 +140,7 @@ export const apiFetch = async <
       }
     } while (willRetry);
 
-    return res;
+    return res ?? { ok: false, error: lastError };
   } catch (e) {
     if (e instanceof FetchRequirementsError) {
       return { ok: false, error: e.message };
