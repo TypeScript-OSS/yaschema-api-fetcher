@@ -14,10 +14,12 @@ import type {
 } from 'yaschema-api';
 import { checkRequestValidation, getUrlBaseForRouteType } from 'yaschema-api';
 
-import { triggerOnRequestValidationErrorHandler } from '../../config/on-request-validation-error';
-import { convertHeadersForFetchRequest } from '../../internal-utils/convert-headers-for-fetch-request';
-import { makeQueryString } from '../../internal-utils/make-query-string';
-import { populateParamMarkersInUrl } from '../../internal-utils/populate-param-markers-in-url';
+import { triggerOnRequestValidationErrorHandler } from '../../../config/on-request-validation-error';
+import { convertHeadersForFetchRequest } from '../../../internal-utils/convert-headers-for-fetch-request';
+import { encodeBody } from '../../../internal-utils/encode-body';
+import { makeQueryString } from '../../../internal-utils/make-query-string';
+import { populateParamMarkersInUrl } from '../../../internal-utils/populate-param-markers-in-url';
+import type { EncodedRequestBody } from '../../types/EncodedRequestBody';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.number().setAllowedSerializationForms(['number', 'string']),
@@ -55,7 +57,7 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>,
   { validationMode }: { validationMode: ValidationMode }
-): Promise<{ url: URL; headers: Record<string, string>; body: string | undefined }> => {
+): Promise<{ url: URL; headers: Record<string, string>; body: EncodedRequestBody }> => {
   const [reqHeaders, reqParams, reqQuery, reqBody] = await Promise.all([
     (api.schemas.request.headers ?? anyReqHeadersSchema).serializeAsync((req.headers ?? {}) as ReqHeadersT, {
       validation: validationMode
@@ -101,11 +103,20 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
   }
   const constructedUrl = `${paramPopulatedUrl}${queryString.length > 0 ? '?' : ''}${queryString}`;
 
-  const convertedHeaders = convertHeadersForFetchRequest(reqHeaders.serialized as AnyHeaders);
-  const stringifiedBody = reqBody.serialized !== undefined ? JSON.stringify(reqBody.serialized) : undefined;
+  const convertedHeaders = convertHeadersForFetchRequest({
+    requestType: api.requestType,
+    headers: reqHeaders.serialized as AnyHeaders
+  });
+
+  let encodedBody: EncodedRequestBody;
+  try {
+    encodedBody = reqBody.serialized !== undefined ? encodeBody({ requestType: api.requestType, body: reqBody.serialized }) : undefined;
+  } catch (e) {
+    throw new FetchRequirementsError(_.get(e, 'message') ?? '');
+  }
 
   const urlBase = getUrlBaseForRouteType(api.routeType);
   const url = new URL(constructedUrl, urlBase.length === 0 ? undefined : urlBase);
 
-  return { url, headers: convertedHeaders, body: stringifiedBody };
+  return { url, headers: convertedHeaders, body: encodedBody };
 };

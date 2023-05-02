@@ -8,9 +8,12 @@ import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } fro
 import { sleep } from '../../internal-utils/sleep';
 import type { ApiFetchResult } from '../types/ApiFetchResult';
 import type { GenericShouldRetryEvaluator, ShouldRetryEvaluator } from '../types/ShouldRetryEvaluator';
-import { generateApiFetchResultFromFetchResponse } from './generate-api-fetch-result-from-fetch-response';
-import { FetchRequirementsError, generateFetchRequirementsFromApiFetchRequest } from './generate-fetch-requirements-from-api-fetch-request';
-import { isUnsupportedHttpResponseType } from './is-unsupported-http-response-type';
+import { generateApiFetchResultFromFetchResponse } from './internal/generate-api-fetch-result-from-fetch-response';
+import {
+  FetchRequirementsError,
+  generateFetchRequirementsFromApiFetchRequest
+} from './internal/generate-fetch-requirements-from-api-fetch-request';
+import { isUnsupportedHttpResponseType } from './internal/is-unsupported-http-response-type';
 
 export interface ApiFetchOptions<
   ReqHeadersT extends AnyHeaders,

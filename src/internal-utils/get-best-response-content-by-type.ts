@@ -1,4 +1,4 @@
-import type { SupportedHttpResponseType } from '../api-fetch/api-fetch/is-unsupported-http-response-type';
+import type { SupportedHttpResponseType } from '../api-fetch/api-fetch/internal/is-unsupported-http-response-type';
 
 /**
  * Uses the response type to determine how to get values from `fetch`.

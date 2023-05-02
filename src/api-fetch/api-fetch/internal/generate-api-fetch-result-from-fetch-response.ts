@@ -16,11 +16,11 @@ import type {
 } from 'yaschema-api';
 import { checkResponseValidation } from 'yaschema-api';
 
-import { triggerOnResponseValidationErrorHandler } from '../../config/on-response-validation-error';
-import { convertHeadersFromFetchResponse } from '../../internal-utils/convert-headers-from-fetch-response';
-import { getBestResponseContentByType } from '../../internal-utils/get-best-response-content-by-type';
-import { isFailureResponseSchemaSpecified } from '../../internal-utils/is-failure-response-schema-specified';
-import type { ApiFetchResult } from '../types/ApiFetchResult';
+import { triggerOnResponseValidationErrorHandler } from '../../../config/on-response-validation-error';
+import { convertHeadersFromFetchResponse } from '../../../internal-utils/convert-headers-from-fetch-response';
+import { getBestResponseContentByType } from '../../../internal-utils/get-best-response-content-by-type';
+import { isFailureResponseSchemaSpecified } from '../../../internal-utils/is-failure-response-schema-specified';
+import type { ApiFetchResult } from '../../types/ApiFetchResult';
 import type { SupportedHttpResponseType } from './is-unsupported-http-response-type';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(

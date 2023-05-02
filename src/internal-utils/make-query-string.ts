@@ -16,13 +16,18 @@ export const makeQueryString = (query: AnyQuery) => {
           continue; // Skipping
         }
 
-        output.push(`${encodedKey}=${encodeURIComponent(String(v))}`);
+        output.push(`${encodedKey}=${encodeFieldValue(v)}`);
       }
     } else {
       const encodedKey = encodeURIComponent(key);
-      output.push(`${encodedKey}=${encodeURIComponent(String(value))}`);
+      output.push(`${encodedKey}=${encodeFieldValue(value)}`);
     }
   }
 
   return output.join('&');
 };
+
+// Helpers
+
+/** Encodes values using `encodeURIComponent(String(…))` */
+const encodeFieldValue = (value: any) => encodeURIComponent(String(value));
