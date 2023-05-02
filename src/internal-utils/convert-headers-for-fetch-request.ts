@@ -1,7 +1,7 @@
 import type { AnyHeaders, HttpRequestType } from 'yaschema-api';
 
-const defaultContentTypeByRequestType: Record<HttpRequestType, string> = {
-  'form-data': 'multipart/form-data',
+const defaultContentTypeByRequestType: Record<HttpRequestType, string | undefined> = {
+  'form-data': undefined, // This will be filled in by fetch
   json: 'application/json'
 };
 
@@ -22,7 +22,12 @@ export const convertHeadersForFetchRequest = ({
     return out;
   }, {});
 
-  output['content-type'] = output['content-type'] ?? defaultContentTypeByRequestType[requestType];
+  if (output['content-type'] === undefined) {
+    const defaultContentType = defaultContentTypeByRequestType[requestType];
+    if (defaultContentType !== undefined) {
+      output['content-type'] = defaultContentType;
+    }
+  }
 
   return output;
 };

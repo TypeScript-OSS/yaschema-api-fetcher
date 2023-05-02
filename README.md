@@ -49,6 +49,25 @@ With yaschema-api, types can be defined for:
 - success response status, headers, and body
 - expected failure response status, headers, and body
 
+## Using with node.js
+
+yaschema-api-fetcher works out-of-the-box for web, but it can also work with node.js.  To set the package up to work with node, do something like:
+
+```typescript
+import nodeFetch, { Blob, FormData } from 'node-fetch';
+import type { BlobConstructor, Fetch } from 'yaschema-api-fetcher';
+import { setBlobConstructor, setFetch, setFormDataConstructor } from 'yaschema-api-fetcher';
+
+…
+
+setFetch(nodeFetch as Fetch);
+// The following are only needed to support form-data requests
+setFormDataConstructor(FormData);
+setBlobConstructor(Blob as BlobConstructor);
+```
+
+You should do these once around application start time, before `apiFetch` is used.
+
 ## Thanks
 
 Thanks for checking it out.  Feel free to create issues or otherwise provide feedback.

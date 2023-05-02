@@ -1,6 +1,6 @@
 import { FormData } from 'node-fetch';
 
-import { setFormDataConstructor } from '../../config/form-data';
+import { setFormDataConstructor } from '../../config/form-data-constructor';
 import { makeFormData } from '../make-form-data';
 
 describe('makeFormData', () => {
@@ -50,7 +50,7 @@ describe('makeFormData', () => {
 // Helpers
 
 const getFormDataEntries = (formData: FormData) => {
-  const output: Array<[string, string | File]> = [];
+  const output: Array<[string, string | Blob]> = [];
 
   formData.forEach((value, key) => {
     output.push([key, value]);

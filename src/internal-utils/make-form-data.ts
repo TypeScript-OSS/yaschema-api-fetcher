@@ -1,6 +1,7 @@
 import type { AnyBody } from 'yaschema-api';
 
-import { getFormDataConstructor } from '../config/form-data';
+import { getBlobConstructor } from '../config/blob-constructor';
+import { getFormDataConstructor } from '../config/form-data-constructor';
 import { primitivesTypes } from './primative-types';
 
 /** Converts a yaschema-api body value into `FormData`.  The body must be `undefined`, `null`, or an object. */
@@ -8,7 +9,7 @@ export const makeFormData = (body: AnyBody) => {
   const FormData = getFormDataConstructor();
   if (FormData === undefined) {
     throw new Error(
-      "FormData hasn't been configured.  With node.js, setFetch and setFormDataConstructor must be used to configure yaschema-api-fetcher"
+      "FormData hasn't been configured.  With node.js, setFetch, setFormDataConstructor, and setBlobConstructor must be used to configure yaschema-api-fetcher for form-data"
     );
   }
   const output = new FormData();
@@ -55,7 +56,16 @@ const encodeFieldValue = (value: any) => {
   const type = typeof value;
   if (primitivesTypes.has(type)) {
     return String(value);
-  } else if (value instanceof File) {
+  }
+
+  const BlobConstructor = getBlobConstructor();
+  if (BlobConstructor === undefined) {
+    throw new Error(
+      "Blob hasn't been configured.  With node.js, setFetch, setFormDataConstructor, and setBlobConstructor must be used to configure yaschema-api-fetcher for form-data"
+    );
+  }
+
+  if (value instanceof BlobConstructor) {
     return value;
   } else {
     return `yaschema/json:${JSON.stringify(value)}`;

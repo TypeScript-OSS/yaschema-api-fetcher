@@ -4,7 +4,7 @@ import { makeHttpApi } from 'yaschema-api';
 
 import type { Fetch } from '../../config/fetch';
 import { setFetch } from '../../config/fetch';
-import { setFormDataConstructor } from '../../config/form-data';
+import { setFormDataConstructor } from '../../config/form-data-constructor';
 import { apiFetch } from '../api-fetch';
 
 describe('apiFetch', () => {
