@@ -85,7 +85,7 @@ describe('apiFetch', () => {
       {
         shouldRetry: async ({ api, retryCount }) => {
           numShouldRetryChecks += 1;
-          return api.isSafeToRetry && retryCount < 2 ? { afterDelayMSec: 100 } : false;
+          return (api.isSafeToRetry ?? false) && retryCount < 2 ? { afterDelayMSec: 100 } : false;
         }
       }
     );

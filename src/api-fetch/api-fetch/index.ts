@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import type { ValidationMode } from 'yaschema';
-import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, HttpApi } from 'yaschema-api';
+import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, GenericHttpApi, HttpApi } from 'yaschema-api';
 
 import { getFetch } from '../../config/fetch';
 import { getDefaultShouldRetryEvaluator } from '../../config/retry';
@@ -131,7 +130,7 @@ export const apiFetch = async <
       }
 
       if (res === undefined || !res.ok) {
-        const shouldRetryResult = (await shouldRetryEvaluator?.({ api, req, res, retryCount })) ?? false;
+        const shouldRetryResult = (await shouldRetryEvaluator?.({ api: api as any as GenericHttpApi, req, res, retryCount })) ?? false;
         retryCount += 1;
 
         if (shouldRetryResult !== false) {

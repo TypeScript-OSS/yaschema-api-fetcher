@@ -1,4 +1,14 @@
-import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, Api, ApiRequest, GenericApiRequest } from 'yaschema-api';
+import type {
+  AnyBody,
+  AnyHeaders,
+  AnyParams,
+  AnyQuery,
+  AnyStatus,
+  ApiRequest,
+  GenericApiRequest,
+  GenericHttpApi,
+  HttpApi
+} from 'yaschema-api';
 
 import type { ApiFetchResult, GenericApiFetchResult } from './ApiFetchResult';
 
@@ -15,14 +25,14 @@ export type ShouldRetryEvaluator<
   ErrResHeadersT extends AnyHeaders,
   ErrResBodyT extends AnyBody
 > = (api: {
-  api: Api;
+  api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>;
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>;
   res: ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT> | undefined;
   retryCount: number;
 }) => Promise<false | { afterDelayMSec: number; wasCanceled?: () => void }>;
 
 export type GenericShouldRetryEvaluator = (api: {
-  api: Api;
+  api: GenericHttpApi;
   req: GenericApiRequest;
   res: GenericApiFetchResult | undefined;
   retryCount: number;
