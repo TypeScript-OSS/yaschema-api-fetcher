@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",
@@ -32,8 +32,8 @@
   "peerDependencies": {},
   "dependencies": {
     "lodash": "^4.17.21",
-    "yaschema": "^3.0.1",
-    "yaschema-api": "^3.3.1"
+    "yaschema": "^3.0.3",
+    "yaschema-api": "^3.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",
