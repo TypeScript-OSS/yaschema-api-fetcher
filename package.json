@@ -32,15 +32,15 @@
   "peerDependencies": {},
   "dependencies": {
     "lodash": "^4.17.21",
-    "yaschema": "^3.0.3",
-    "yaschema-api": "^3.3.2"
+    "yaschema": "^3.0.4",
+    "yaschema-api": "^3.3.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
-    "eslint": "8.42.0",
+    "eslint": "8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.26.0",
