@@ -6,12 +6,10 @@ import { getDefaultShouldRetryEvaluator } from '../../config/retry';
 import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } from '../../config/validation-mode';
 import { sleep } from '../../internal-utils/sleep';
 import type { ApiFetchResult } from '../types/ApiFetchResult';
+import { FetchRequirementsError } from '../types/FetchRequirementsError';
 import type { GenericShouldRetryEvaluator, ShouldRetryEvaluator } from '../types/ShouldRetryEvaluator';
 import { generateApiFetchResultFromFetchResponse } from './internal/generate-api-fetch-result-from-fetch-response';
-import {
-  FetchRequirementsError,
-  generateFetchRequirementsFromApiFetchRequest
-} from './internal/generate-fetch-requirements-from-api-fetch-request';
+import { generateFetchRequirementsFromApiFetchRequest } from './internal/generate-fetch-requirements-from-api-fetch-request';
 import { isUnsupportedHttpResponseType } from './internal/is-unsupported-http-response-type';
 
 export interface ApiFetchOptions<

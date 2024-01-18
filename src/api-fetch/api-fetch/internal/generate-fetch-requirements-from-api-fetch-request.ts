@@ -12,14 +12,14 @@ import type {
   GenericHttpApi,
   HttpApi
 } from 'yaschema-api';
-import { checkRequestValidation, getUrlBaseForRouteType } from 'yaschema-api';
+import { checkRequestValidation } from 'yaschema-api';
 
 import { triggerOnRequestValidationErrorHandler } from '../../../config/on-request-validation-error';
 import { convertHeadersForFetchRequest } from '../../../internal-utils/convert-headers-for-fetch-request';
 import { encodeBody } from '../../../internal-utils/encode-body';
-import { makeQueryString } from '../../../internal-utils/make-query-string';
-import { populateParamMarkersInUrl } from '../../../internal-utils/populate-param-markers-in-url';
 import type { EncodedRequestBody } from '../../types/EncodedRequestBody';
+import { FetchRequirementsError } from '../../types/FetchRequirementsError';
+import { determineApiUrlUsingPreSerializedParts } from './determine-api-url-using-pre-serialized-parts';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.number().setAllowedSerializationForms(['number', 'string']),
@@ -33,12 +33,6 @@ const anyReqQuerySchema = schema
   .record(schema.string(), schema.oneOf(anyStringSerializableTypeSchema, schema.array({ items: anyStringSerializableTypeSchema })))
   .optional();
 const anyReqBodySchema = schema.any().allowNull().optional();
-
-export class FetchRequirementsError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
 
 /** Generates the requirements needed to call `fetch`.  If the request shouldn't be made because of an error, this throws a
  * `FetchRequirementsError` */
@@ -94,15 +88,6 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
     }
   }
 
-  const queryString = makeQueryString(reqQuery.serialized as AnyQuery);
-  let paramPopulatedUrl: string;
-  try {
-    paramPopulatedUrl = populateParamMarkersInUrl(api.url, reqParams.serialized as AnyParams);
-  } catch (e) {
-    throw new FetchRequirementsError(_.get(e, 'message') ?? '');
-  }
-  const constructedUrl = `${paramPopulatedUrl}${queryString.length > 0 ? '?' : ''}${queryString}`;
-
   const convertedHeaders = convertHeadersForFetchRequest({
     requestType: api.requestType,
     headers: reqHeaders.serialized as AnyHeaders
@@ -115,8 +100,10 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
     throw new FetchRequirementsError(_.get(e, 'message') ?? '');
   }
 
-  const urlBase = getUrlBaseForRouteType(api.routeType);
-  const url = new URL(constructedUrl, urlBase.length === 0 ? undefined : urlBase);
+  const url = await determineApiUrlUsingPreSerializedParts(api, {
+    params: reqParams.serialized as AnyParams,
+    query: reqQuery.serialized as AnyQuery
+  });
 
   return { url, headers: convertedHeaders, body: encodedBody };
 };
