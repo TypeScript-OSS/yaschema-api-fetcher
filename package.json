@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",

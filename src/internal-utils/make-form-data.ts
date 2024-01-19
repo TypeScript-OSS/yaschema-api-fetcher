@@ -2,7 +2,7 @@ import type { AnyBody } from 'yaschema-api';
 
 import { getBlobConstructor } from '../config/blob-constructor';
 import { getFormDataConstructor } from '../config/form-data-constructor';
-import { primitivesTypes } from './primative-types';
+import { YASCHEMA_JSON_PREFIX } from '../consts/json';
 
 /** Converts a yaschema-api body value into `FormData`.  The body must be `undefined`, `null`, or an object. */
 export const makeFormData = (body: AnyBody) => {
@@ -53,8 +53,7 @@ const encodeFieldValue = (value: any) => {
     return String(value);
   }
 
-  const type = typeof value;
-  if (primitivesTypes.has(type)) {
+  if (typeof value === 'string') {
     return String(value);
   }
 
@@ -68,6 +67,6 @@ const encodeFieldValue = (value: any) => {
   if (value instanceof BlobConstructor) {
     return value;
   } else {
-    return `yaschema/json:${JSON.stringify(value)}`;
+    return `${YASCHEMA_JSON_PREFIX}${JSON.stringify(value)}`;
   }
 };

@@ -1,6 +1,7 @@
 import { FormData } from 'node-fetch';
 
 import { setFormDataConstructor } from '../../config/form-data-constructor';
+import { YASCHEMA_JSON_PREFIX } from '../../consts/json';
 import { makeFormData } from '../make-form-data';
 
 describe('makeFormData', () => {
@@ -38,8 +39,8 @@ describe('makeFormData', () => {
   it('should work with mixed value types', () => {
     expect(getFormDataEntries(makeFormData({ one: 'one', two: 2, three: true, four: ['a', 'b', 'c&d'] }))).toMatchObject([
       ['one', 'one'],
-      ['two', '2'],
-      ['three', 'true'],
+      ['two', `${YASCHEMA_JSON_PREFIX}2`],
+      ['three', `${YASCHEMA_JSON_PREFIX}true`],
       ['four[]', 'a'],
       ['four[]', 'b'],
       ['four[]', 'c&d']
