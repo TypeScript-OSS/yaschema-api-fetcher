@@ -6,7 +6,7 @@ import { makeQueryString } from '../../../internal-utils/make-query-string';
 import { populateParamMarkersInUrl } from '../../../internal-utils/populate-param-markers-in-url';
 import { FetchRequirementsError } from '../../types/FetchRequirementsError';
 
-export const determineApiUrlUsingPreSerializedParts = async <
+export const determineApiUrlUsingPreSerializedParts = <
   ReqHeadersT extends AnyHeaders,
   ReqParamsT extends AnyParams,
   ReqQueryT extends AnyQuery,
@@ -20,7 +20,7 @@ export const determineApiUrlUsingPreSerializedParts = async <
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: { params: AnyParams; query: AnyQuery }
-): Promise<URL> => {
+): URL => {
   const queryString = makeQueryString(req.query);
   let paramPopulatedUrl: string;
   try {

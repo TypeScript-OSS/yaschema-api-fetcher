@@ -100,7 +100,7 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
     throw new FetchRequirementsError(_.get(e, 'message') ?? '');
   }
 
-  const url = await determineApiUrlUsingPreSerializedParts(api, {
+  const url = determineApiUrlUsingPreSerializedParts(api, {
     params: reqParams.serialized as AnyParams,
     query: reqQuery.serialized as AnyQuery
   });
