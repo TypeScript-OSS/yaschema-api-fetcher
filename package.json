@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",
@@ -32,12 +32,14 @@
   "peerDependencies": {},
   "dependencies": {
     "lodash": "^4.17.21",
+    "uuid": "9.0.1",
     "yaschema": "^3.3.0",
     "yaschema-api": "^3.4.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/lodash": "^4.14.202",
+    "@types/uuid": "9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "eslint": "8.56.0",

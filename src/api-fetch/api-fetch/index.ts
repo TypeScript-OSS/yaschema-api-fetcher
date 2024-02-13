@@ -1,7 +1,11 @@
+import { v4 as uuid } from 'uuid';
 import type { ValidationMode } from 'yaschema';
 import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, GenericHttpApi, HttpApi } from 'yaschema-api';
 
 import { getFetch } from '../../config/fetch';
+import { getOnDidReceiveResponseHandler } from '../../config/on-did-receive-response';
+import { getOnDidRequestHandler } from '../../config/on-did-request';
+import { getOnWillRequestHandler } from '../../config/on-will-request';
 import { getDefaultShouldRetryEvaluator } from '../../config/retry';
 import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } from '../../config/validation-mode';
 import { sleep } from '../../internal-utils/sleep';
@@ -92,6 +96,8 @@ export const apiFetch = async <
     throw new Error(`Unsupported HTTP response type (${responseType}) encountered for ${api.url}`);
   }
 
+  const reqId = uuid();
+
   try {
     const { url, headers, body } = await generateFetchRequirementsFromApiFetchRequest(api, req, { validationMode: requestValidationMode });
 
@@ -115,9 +121,17 @@ export const apiFetch = async <
       res = undefined;
       willRetry = false;
 
+      getOnWillRequestHandler()({ api: api as any as GenericHttpApi, req, reqId, retryCount });
+
       let fetchRes: Response | undefined;
       try {
-        fetchRes = await fetch(url, combinedFetchOptions);
+        const fetchPromise = fetch(url, combinedFetchOptions);
+
+        getOnDidRequestHandler()({ api: api as any as GenericHttpApi, req, reqId, retryCount });
+
+        fetchRes = await fetchPromise;
+
+        getOnDidReceiveResponseHandler()({ api: api as any as GenericHttpApi, req, reqId, retryCount, res: fetchRes });
       } catch (e) {
         // Usually when the server is unreachable
         lastError = e instanceof Error ? e.message : lastError;
