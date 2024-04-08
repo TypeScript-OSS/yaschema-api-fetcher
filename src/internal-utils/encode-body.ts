@@ -6,6 +6,8 @@ import { makeFormData } from './make-form-data';
 type RequestBodyEncoder = (body: AnyBody) => EncodedRequestBody;
 
 const encodersByRequestType: Record<HttpRequestType, RequestBodyEncoder> = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  binary: (value: any) => value,
   'form-data': makeFormData,
   json: JSON.stringify
 };

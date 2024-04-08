@@ -1,6 +1,7 @@
 import type { AnyHeaders, HttpRequestType } from 'yaschema-api';
 
 const defaultContentTypeByRequestType: Record<HttpRequestType, string | undefined> = {
+  binary: undefined, // This should be specified manually
   'form-data': undefined, // This will be filled in by fetch
   json: 'application/json'
 };
