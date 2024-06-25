@@ -16,10 +16,10 @@ import type {
 } from 'yaschema-api';
 import { checkResponseValidation } from 'yaschema-api';
 
-import { triggerOnResponseValidationErrorHandler } from '../../../config/on-response-validation-error';
-import { convertHeadersFromFetchResponse } from '../../../internal-utils/convert-headers-from-fetch-response';
-import { getBestResponseContentByType } from '../../../internal-utils/get-best-response-content-by-type';
-import { isFailureResponseSchemaSpecified } from '../../../internal-utils/is-failure-response-schema-specified';
+import { triggerOnResponseValidationErrorHandler } from '../../../config/on-response-validation-error.js';
+import { convertHeadersFromFetchResponse } from '../../../internal-utils/convert-headers-from-fetch-response.js';
+import { getBestResponseContentByType } from '../../../internal-utils/get-best-response-content-by-type.js';
+import { isFailureResponseSchemaSpecified } from '../../../internal-utils/is-failure-response-schema-specified.js';
 import type { ApiFetchResult } from '../../types/ApiFetchResult';
 import type { SupportedHttpResponseType } from './is-unsupported-http-response-type';
 

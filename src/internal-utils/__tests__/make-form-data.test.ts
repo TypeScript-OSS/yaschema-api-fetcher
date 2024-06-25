@@ -1,14 +1,7 @@
-import { FormData } from 'node-fetch';
-
-import { setFormDataConstructor } from '../../config/form-data-constructor';
-import { YASCHEMA_JSON_PREFIX } from '../../consts/json';
-import { makeFormData } from '../make-form-data';
+import { YASCHEMA_JSON_PREFIX } from '../../consts/json.js';
+import { makeFormData } from '../make-form-data.js';
 
 describe('makeFormData', () => {
-  beforeAll(() => {
-    setFormDataConstructor(FormData);
-  });
-
   it('should work with empty object', () => {
     expect(getFormDataEntries(makeFormData({}))).toMatchObject([]);
   });

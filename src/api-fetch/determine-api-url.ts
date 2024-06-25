@@ -1,7 +1,7 @@
 import { schema, type ValidationMode } from 'yaschema';
 import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, HttpApi } from 'yaschema-api';
 
-import { determineApiUrlUsingPreSerializedParts } from './api-fetch/internal/determine-api-url-using-pre-serialized-parts';
+import { determineApiUrlUsingPreSerializedParts } from './api-fetch/internal/determine-api-url-using-pre-serialized-parts.js';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.number().setAllowedSerializationForms(['number', 'string']),

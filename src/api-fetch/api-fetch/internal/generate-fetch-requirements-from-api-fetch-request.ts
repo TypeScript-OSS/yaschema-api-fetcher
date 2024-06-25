@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type { ValidationMode } from 'yaschema';
 import { schema } from 'yaschema';
 import type {
@@ -14,12 +13,13 @@ import type {
 } from 'yaschema-api';
 import { checkRequestValidation } from 'yaschema-api';
 
-import { triggerOnRequestValidationErrorHandler } from '../../../config/on-request-validation-error';
-import { convertHeadersForFetchRequest } from '../../../internal-utils/convert-headers-for-fetch-request';
-import { encodeBody } from '../../../internal-utils/encode-body';
+import { triggerOnRequestValidationErrorHandler } from '../../../config/on-request-validation-error.js';
+import { convertHeadersForFetchRequest } from '../../../internal-utils/convert-headers-for-fetch-request.js';
+import { encodeBody } from '../../../internal-utils/encode-body.js';
+import { safeGet } from '../../../internal-utils/safe-get.js';
 import type { EncodedRequestBody } from '../../types/EncodedRequestBody';
-import { FetchRequirementsError } from '../../types/FetchRequirementsError';
-import { determineApiUrlUsingPreSerializedParts } from './determine-api-url-using-pre-serialized-parts';
+import { FetchRequirementsError } from '../../types/FetchRequirementsError.js';
+import { determineApiUrlUsingPreSerializedParts } from './determine-api-url-using-pre-serialized-parts.js';
 
 const anyStringSerializableTypeSchema = schema.oneOf3(
   schema.number().setAllowedSerializationForms(['number', 'string']),
@@ -97,7 +97,7 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
   try {
     encodedBody = reqBody.serialized !== undefined ? encodeBody({ requestType: api.requestType, body: reqBody.serialized }) : undefined;
   } catch (e) {
-    throw new FetchRequirementsError(_.get(e, 'message') ?? '');
+    throw new FetchRequirementsError(safeGet(e, 'message') ?? '');
   }
 
   const url = determineApiUrlUsingPreSerializedParts(api, {

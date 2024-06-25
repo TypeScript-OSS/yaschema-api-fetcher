@@ -1,7 +1,7 @@
 import type { AnyBody, HttpRequestType } from 'yaschema-api';
 
 import type { EncodedRequestBody } from '../api-fetch/types/EncodedRequestBody';
-import { makeFormData } from './make-form-data';
+import { makeFormData } from './make-form-data.js';
 
 type RequestBodyEncoder = (body: AnyBody) => EncodedRequestBody;
 

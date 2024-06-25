@@ -1,10 +1,10 @@
-import _ from 'lodash';
 import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, HttpApi } from 'yaschema-api';
 import { getUrlBaseForRouteType } from 'yaschema-api';
 
-import { makeQueryString } from '../../../internal-utils/make-query-string';
-import { populateParamMarkersInUrl } from '../../../internal-utils/populate-param-markers-in-url';
-import { FetchRequirementsError } from '../../types/FetchRequirementsError';
+import { makeQueryString } from '../../../internal-utils/make-query-string.js';
+import { populateParamMarkersInUrl } from '../../../internal-utils/populate-param-markers-in-url.js';
+import { safeGet } from '../../../internal-utils/safe-get.js';
+import { FetchRequirementsError } from '../../types/FetchRequirementsError.js';
 
 export const determineApiUrlUsingPreSerializedParts = <
   ReqHeadersT extends AnyHeaders,
@@ -26,7 +26,7 @@ export const determineApiUrlUsingPreSerializedParts = <
   try {
     paramPopulatedUrl = populateParamMarkersInUrl(api.url, req.params);
   } catch (e) {
-    throw new FetchRequirementsError(_.get(e, 'message') ?? '');
+    throw new FetchRequirementsError(safeGet(e, 'message') ?? '');
   }
   const constructedUrl = `${paramPopulatedUrl}${queryString.length > 0 ? '?' : ''}${queryString}`;
 

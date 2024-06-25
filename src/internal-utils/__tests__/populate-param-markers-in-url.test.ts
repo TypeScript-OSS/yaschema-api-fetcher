@@ -1,4 +1,4 @@
-import { populateParamMarkersInUrl } from '../populate-param-markers-in-url';
+import { populateParamMarkersInUrl } from '../populate-param-markers-in-url.js';
 
 describe('populateParamMarkersInUrl', () => {
   it('should support zero params', () => {

@@ -1,6 +1,6 @@
 import { schema } from 'yaschema';
 
-import { isFailureResponseSchemaSpecified } from '../is-failure-response-schema-specified';
+import { isFailureResponseSchemaSpecified } from '../is-failure-response-schema-specified.js';
 
 describe('isFailureResponseSchemaSpecified', () => {
   it('should work with undefined', () => {

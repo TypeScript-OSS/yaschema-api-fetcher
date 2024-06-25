@@ -1,4 +1,4 @@
-import { makeQueryString } from '../make-query-string';
+import { makeQueryString } from '../make-query-string.js';
 
 describe('makeQueryString', () => {
   it('should work with empty object', () => {

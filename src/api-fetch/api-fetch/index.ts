@@ -2,19 +2,19 @@ import { v4 as uuid } from 'uuid';
 import type { ValidationMode } from 'yaschema';
 import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, GenericHttpApi, HttpApi } from 'yaschema-api';
 
-import { getFetch } from '../../config/fetch';
-import { getOnDidReceiveResponseHandler } from '../../config/on-did-receive-response';
-import { getOnDidRequestHandler } from '../../config/on-did-request';
-import { getOnWillRequestHandler } from '../../config/on-will-request';
-import { getDefaultShouldRetryEvaluator } from '../../config/retry';
-import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } from '../../config/validation-mode';
-import { sleep } from '../../internal-utils/sleep';
+import { getFetch } from '../../config/fetch.js';
+import { getOnDidReceiveResponseHandler } from '../../config/on-did-receive-response.js';
+import { getOnDidRequestHandler } from '../../config/on-did-request.js';
+import { getOnWillRequestHandler } from '../../config/on-will-request.js';
+import { getDefaultShouldRetryEvaluator } from '../../config/retry.js';
+import { getDefaultRequestValidationMode, getDefaultResponseValidationMode } from '../../config/validation-mode.js';
+import { sleep } from '../../internal-utils/sleep.js';
 import type { ApiFetchResult } from '../types/ApiFetchResult';
-import { FetchRequirementsError } from '../types/FetchRequirementsError';
+import { FetchRequirementsError } from '../types/FetchRequirementsError.js';
 import type { GenericShouldRetryEvaluator, ShouldRetryEvaluator } from '../types/ShouldRetryEvaluator';
-import { generateApiFetchResultFromFetchResponse } from './internal/generate-api-fetch-result-from-fetch-response';
-import { generateFetchRequirementsFromApiFetchRequest } from './internal/generate-fetch-requirements-from-api-fetch-request';
-import { isUnsupportedHttpResponseType } from './internal/is-unsupported-http-response-type';
+import { generateApiFetchResultFromFetchResponse } from './internal/generate-api-fetch-result-from-fetch-response.js';
+import { generateFetchRequirementsFromApiFetchRequest } from './internal/generate-fetch-requirements-from-api-fetch-request.js';
+import { isUnsupportedHttpResponseType } from './internal/is-unsupported-http-response-type.js';
 
 export interface ApiFetchOptions<
   ReqHeadersT extends AnyHeaders,

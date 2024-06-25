@@ -1,8 +1,8 @@
 import type { AnyBody } from 'yaschema-api';
 
-import { getBlobConstructor } from '../config/blob-constructor';
-import { getFormDataConstructor } from '../config/form-data-constructor';
-import { YASCHEMA_JSON_PREFIX } from '../consts/json';
+import { getBlobConstructor } from '../config/blob-constructor.js';
+import { getFormDataConstructor } from '../config/form-data-constructor.js';
+import { YASCHEMA_JSON_PREFIX } from '../consts/json.js';
 
 /** Converts a yaschema-api body value into `FormData`.  The body must be `undefined`, `null`, or an object. */
 export const makeFormData = (body: AnyBody) => {

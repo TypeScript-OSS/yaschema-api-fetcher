@@ -1,18 +1,9 @@
-import nodeFetch, { FormData } from 'node-fetch';
 import { schema } from 'yaschema';
 import { makeHttpApi } from 'yaschema-api';
 
-import type { Fetch } from '../../config/fetch';
-import { setFetch } from '../../config/fetch';
-import { setFormDataConstructor } from '../../config/form-data-constructor';
-import { apiFetch } from '../api-fetch';
+import { apiFetch } from '../api-fetch/index.js';
 
 describe('apiFetch', () => {
-  beforeAll(() => {
-    setFetch(nodeFetch as any as Fetch);
-    setFormDataConstructor(FormData);
-  });
-
   it('GET should work', async () => {
     const exampleApi = makeHttpApi({
       method: 'GET',
