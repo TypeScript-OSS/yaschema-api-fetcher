@@ -70,15 +70,15 @@ export const generateApiFetchResultFromFetchResponse = async <
   ): Promise<
     | ({ ok: true; res: ApiResponse<ResStatusT, ResHeadersT, ResBodyT> } & (
         | { hadSoftValidationError: false; invalidPart?: undefined; validationError?: undefined }
-        | { hadSoftValidationError: true; invalidPart: keyof GenericApiResponse; validationError: string }
+        | { hadSoftValidationError: true; invalidPart: keyof GenericApiResponse; validationError: string; validationErrorPath: string }
       ))
-    | { ok: false; invalidPart: keyof GenericApiResponse; validationError: string }
+    | { ok: false; invalidPart: keyof GenericApiResponse; validationError: string; validationErrorPath: string }
   > => {
     const resStatus = (schemas.status ?? anyResStatusSchema).deserialize(fetchRes.status, { validation: validationMode });
 
     // We always do hard validation on statuses
     if (resStatus.error !== undefined) {
-      return { ok: false, invalidPart: 'status', validationError: resStatus.error };
+      return { ok: false, invalidPart: 'status', validationError: resStatus.error, validationErrorPath: resStatus.errorPath };
     }
 
     const [resHeaders, resBody] = await Promise.all([
@@ -106,7 +106,8 @@ export const generateApiFetchResultFromFetchResponse = async <
           res,
           hadSoftValidationError: true,
           invalidPart: checkedResponseValidation.invalidPart,
-          validationError: checkedResponseValidation.validationError
+          validationError: checkedResponseValidation.validationError,
+          validationErrorPath: checkedResponseValidation.validationErrorPath
         };
       }
     }
@@ -138,7 +139,8 @@ export const generateApiFetchResultFromFetchResponse = async <
       res: success.res as GenericApiResponse,
       fetchRes,
       invalidPart: success.invalidPart,
-      validationError: success.validationError
+      validationError: success.validationError,
+      validationErrorPath: success.validationErrorPath
     });
 
     return { ok: true, fetchRes, ...success.res };
@@ -151,7 +153,8 @@ export const generateApiFetchResultFromFetchResponse = async <
       res: undefined,
       fetchRes,
       invalidPart: success.invalidPart,
-      validationError: success.validationError
+      validationError: success.validationError,
+      validationErrorPath: success.validationErrorPath
     });
 
     return { ok: false, error: `Response ${success.invalidPart} validation error: ${success.validationError}`, fetchRes };
@@ -178,7 +181,8 @@ export const generateApiFetchResultFromFetchResponse = async <
           res: failure.res as GenericApiResponse,
           fetchRes,
           invalidPart: failure.invalidPart,
-          validationError: failure.validationError
+          validationError: failure.validationError,
+          validationErrorPath: failure.validationErrorPath
         });
       }
 
