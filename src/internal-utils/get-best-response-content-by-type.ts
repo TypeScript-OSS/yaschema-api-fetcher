@@ -1,3 +1,5 @@
+import type { JsonValue } from 'yaschema';
+
 import type { SupportedHttpResponseType } from '../api-fetch/api-fetch/internal/is-unsupported-http-response-type';
 
 /**
@@ -11,7 +13,7 @@ import type { SupportedHttpResponseType } from '../api-fetch/api-fetch/internal/
 export const getBestResponseContentByType = async (responseType: SupportedHttpResponseType | 'dynamic', res: Response) => {
   switch (responseType) {
     case 'json':
-      return res.json();
+      return res.json() as Promise<JsonValue>;
     case 'text':
       return res.text();
     case 'blob':
@@ -23,7 +25,7 @@ export const getBestResponseContentByType = async (responseType: SupportedHttpRe
     case 'dynamic': {
       const contentType = res.headers.get('content-type') ?? '';
       if (contentType.includes('application/json')) {
-        return res.json();
+        return res.json() as Promise<JsonValue>;
       } else if (contentType.includes('text/plain')) {
         return res.text();
       } else {

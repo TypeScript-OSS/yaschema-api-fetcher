@@ -1,5 +1,5 @@
 export interface BlobConstructor {
-  new (form?: HTMLFormElement | undefined): Blob;
+  new (form?: HTMLFormElement): Blob;
   prototype: Blob;
 }
 

@@ -1,5 +1,5 @@
 export interface FormDataConstructor {
-  new (form?: HTMLFormElement | undefined): FormData;
+  new (form?: HTMLFormElement): FormData;
   prototype: FormData;
 }
 
