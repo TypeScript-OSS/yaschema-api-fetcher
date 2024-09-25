@@ -117,7 +117,6 @@ export const generateApiFetchResultFromFetchResponse = async <
 
   let fetchResBody: any;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     fetchResBody = await getBestResponseContentByType(responseType, fetchRes);
   } catch (_e) {
     // Ignoring, this is usually due to an empty JSON body
