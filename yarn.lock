@@ -5246,10 +5246,10 @@ yargs@^17.3.1:
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
 
-yaschema-api@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/yaschema-api/-/yaschema-api-3.7.1.tgz#a65487849c0e6699c1c7f6d0c7125d6af95b5690"
-  integrity sha512-IR18P/veg2SaDjB0ow8dew8B8XOgkmzoX/tFGdu/01Mqxef4Vgl/uUk00h0dZoxESRGWuNONFnfwcxQuyvHElg==
+yaschema-api@^3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/yaschema-api/-/yaschema-api-3.8.0.tgz#476839b9a7a9db1f4749f38d97c30a027485aa59"
+  integrity sha512-+BO1CLsLQdxZ7IQiEvx8IfFa9Os/FZfsJqyL+GSIqBkjDWTwNnKUFQyTQHBzZ1ug8M2dNE13nAkwNUlDaokT5Q==
   dependencies:
     yaschema "^3.6.0"
 
