@@ -1,5 +1,4 @@
 import type { ValidationMode } from 'yaschema';
-import { schema } from 'yaschema';
 import type {
   AnyBody,
   AnyHeaders,
@@ -14,7 +13,7 @@ import type {
   HttpApi,
   ResponseSchemas
 } from 'yaschema-api';
-import { checkResponseValidation } from 'yaschema-api';
+import { anyResBodySchema, anyResHeadersSchema, anyResStatusSchema, checkResponseValidation } from 'yaschema-api';
 
 import { triggerOnResponseValidationErrorHandler } from '../../../config/on-response-validation-error.js';
 import { convertHeadersFromFetchResponse } from '../../../internal-utils/convert-headers-from-fetch-response.js';
@@ -22,16 +21,6 @@ import { getBestResponseContentByType } from '../../../internal-utils/get-best-r
 import { isFailureResponseSchemaSpecified } from '../../../internal-utils/is-failure-response-schema-specified.js';
 import type { ApiFetchResult } from '../../types/ApiFetchResult';
 import type { SupportedHttpResponseType } from './is-unsupported-http-response-type';
-
-const anyStringSerializableTypeSchema = schema.oneOf3(
-  schema.number().setAllowedSerializationForms(['number', 'string']),
-  schema.boolean().setAllowedSerializationForms(['boolean', 'string']),
-  schema.string()
-);
-
-const anyResStatusSchema = schema.number();
-const anyResHeadersSchema = schema.record(schema.string(), anyStringSerializableTypeSchema);
-const anyResBodySchema = schema.any().allowNull().optional();
 
 /** Checks the response returned by `fetch`, comparing it with the success and failure schemas, and generates the most-appropriate
  * `ApiFetchResult` */
