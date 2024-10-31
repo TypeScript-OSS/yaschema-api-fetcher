@@ -8,5 +8,6 @@ export const populateParamMarkersInUrl = (url: string, params: AnyParams) =>
     if (value === undefined) {
       throw new Error(`Missing param value for ${paramName as string}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return encodeURIComponent(String(value));
   });
