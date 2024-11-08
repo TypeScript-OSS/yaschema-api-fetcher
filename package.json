@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",
@@ -38,8 +38,8 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "uuid": "11.0.2",
-    "yaschema": "^4.0.0",
-    "yaschema-api": "^4.0.0"
+    "yaschema": "^4.1.0",
+    "yaschema-api": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/compat": "1.2.2",

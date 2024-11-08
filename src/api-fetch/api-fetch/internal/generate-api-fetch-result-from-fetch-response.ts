@@ -63,7 +63,7 @@ export const generateApiFetchResultFromFetchResponse = async <
       ))
     | { ok: false; invalidPart: keyof GenericApiResponse; validationError: string; validationErrorPath: string }
   > => {
-    const resStatus = (schemas.status ?? anyResStatusSchema).deserialize(fetchRes.status, { validation: validationMode });
+    const resStatus = await (schemas.status ?? anyResStatusSchema).deserializeAsync(fetchRes.status, { validation: validationMode });
 
     // We always do hard validation on statuses
     if (resStatus.error !== undefined) {
