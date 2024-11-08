@@ -1,3 +1,4 @@
+import isPromise from 'is-promise';
 import { type ValidationMode } from 'yaschema';
 import {
   type AnyBody,
@@ -13,6 +14,7 @@ import {
 
 import { determineApiUrlUsingPreSerializedParts } from './api-fetch/internal/determine-api-url-using-pre-serialized-parts.js';
 
+/** @throws if the request params or query are async-only schemas */
 export const determineApiUrl = <
   ReqHeadersT extends AnyHeaders,
   ReqParamsT extends AnyParams,
@@ -30,11 +32,18 @@ export const determineApiUrl = <
   { validationMode }: { validationMode: ValidationMode }
 ): URL => {
   const [reqParams, reqQuery] = [
-    (api.schemas.request.params ?? anyReqParamsSchema).serialize((req.params ?? {}) as ReqParamsT, { validation: validationMode }),
-    (api.schemas.request.query ?? anyReqQuerySchema).serialize((req.query ?? {}) as ReqQueryT, { validation: validationMode })
+    (api.schemas.request.params ?? anyReqParamsSchema).serializeAsync((req.params ?? {}) as ReqParamsT, { validation: validationMode }),
+    (api.schemas.request.query ?? anyReqQuerySchema).serializeAsync((req.query ?? {}) as ReqQueryT, { validation: validationMode })
   ];
 
-  return determineApiUrlUsingPreSerializedParts(api, { params: reqParams.serialized as AnyParams, query: reqQuery.serialized as AnyQuery });
+  if (isPromise(reqParams) || isPromise(reqQuery)) {
+    throw new Error('Use determineApiUrlAsync for async-only schemas');
+  }
+
+  return determineApiUrlUsingPreSerializedParts(api, {
+    params: reqParams.serialized as AnyParams,
+    query: reqQuery.serialized as AnyQuery
+  });
 };
 
 export const determineApiUrlAsync = async <

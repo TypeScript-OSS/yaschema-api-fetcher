@@ -1,6 +1,6 @@
 {
   "name": "yaschema-api-fetcher",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Fetch support for yaschema-api",
   "keywords": [
     "schema",
@@ -35,6 +35,7 @@
   },
   "peerDependencies": {},
   "dependencies": {
+    "is-promise": "4.0.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "uuid": "11.0.2",
