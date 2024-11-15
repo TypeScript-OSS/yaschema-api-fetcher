@@ -6,6 +6,7 @@ import type {
   AnyQuery,
   AnyStatus,
   ApiRequest,
+  ApiRoutingContext,
   GenericApiRequest,
   GenericHttpApi,
   HttpApi
@@ -36,7 +37,7 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>,
-  { validationMode }: { validationMode: ValidationMode }
+  { validationMode, context }: { validationMode: ValidationMode; context?: ApiRoutingContext }
 ): Promise<{ url: URL; headers: Record<string, string>; body: EncodedRequestBody }> => {
   const [reqHeaders, reqParams, reqQuery, reqBody] = await Promise.all([
     (api.schemas.request.headers ?? anyReqHeadersSchema).serializeAsync((req.headers ?? {}) as ReqHeadersT, {
@@ -87,10 +88,14 @@ export const generateFetchRequirementsFromApiFetchRequest = async <
     throw new FetchRequirementsError(safeGet(e, 'message') ?? '');
   }
 
-  const url = determineApiUrlUsingPreSerializedParts(api, {
-    params: reqParams.serialized as AnyParams,
-    query: reqQuery.serialized as AnyQuery
-  });
+  const url = determineApiUrlUsingPreSerializedParts(
+    api,
+    {
+      params: reqParams.serialized as AnyParams,
+      query: reqQuery.serialized as AnyQuery
+    },
+    { context }
+  );
 
   return { url, headers: convertedHeaders, body: encodedBody };
 };

@@ -1,6 +1,16 @@
 import { v4 as uuid } from 'uuid';
 import type { ValidationMode } from 'yaschema';
-import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, GenericHttpApi, HttpApi } from 'yaschema-api';
+import type {
+  AnyBody,
+  AnyHeaders,
+  AnyParams,
+  AnyQuery,
+  AnyStatus,
+  ApiRequest,
+  ApiRoutingContext,
+  GenericHttpApi,
+  HttpApi
+} from 'yaschema-api';
 
 import { getFetch } from '../../config/fetch.js';
 import { getOnDidReceiveResponseHandler } from '../../config/on-did-receive-response.js';
@@ -77,7 +87,8 @@ export const apiFetch = async <
     requestValidationMode = getDefaultRequestValidationMode(),
     responseValidationMode = getDefaultResponseValidationMode(),
     fetchOptions,
-    shouldRetry
+    shouldRetry,
+    context
   }: ApiFetchOptions<
     ReqHeadersT,
     ReqParamsT,
@@ -89,7 +100,7 @@ export const apiFetch = async <
     ErrResStatusT,
     ErrResHeadersT,
     ErrResBodyT
-  > = {}
+  > & { context?: ApiRoutingContext } = {}
 ): Promise<ApiFetchResult<ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>> => {
   const responseType = api.responseType ?? 'json';
   if (responseType !== 'dynamic' && isUnsupportedHttpResponseType(responseType)) {
@@ -99,7 +110,10 @@ export const apiFetch = async <
   const reqId = uuid();
 
   try {
-    const { url, headers, body } = await generateFetchRequirementsFromApiFetchRequest(api, req, { validationMode: requestValidationMode });
+    const { url, headers, body } = await generateFetchRequirementsFromApiFetchRequest(api, req, {
+      validationMode: requestValidationMode,
+      context
+    });
 
     const fetch = getFetch();
     const combinedFetchOptions: RequestInit = {

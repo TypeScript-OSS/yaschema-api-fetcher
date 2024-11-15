@@ -1,4 +1,4 @@
-import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, HttpApi } from 'yaschema-api';
+import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRoutingContext, HttpApi } from 'yaschema-api';
 import { getUrlBaseForRouteType } from 'yaschema-api';
 
 import { makeQueryString } from '../../../internal-utils/make-query-string.js';
@@ -19,7 +19,8 @@ export const determineApiUrlUsingPreSerializedParts = <
   ErrResBodyT extends AnyBody
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
-  req: { params: AnyParams; query: AnyQuery }
+  req: { params: AnyParams; query: AnyQuery },
+  { context }: { context?: ApiRoutingContext } = {}
 ): URL => {
   const queryString = makeQueryString(req.query);
   let paramPopulatedUrl: string;
@@ -30,7 +31,7 @@ export const determineApiUrlUsingPreSerializedParts = <
   }
   const constructedUrl = `${paramPopulatedUrl}${queryString.length > 0 ? '?' : ''}${queryString}`;
 
-  const urlBase = getUrlBaseForRouteType(api.routeType);
+  const urlBase = getUrlBaseForRouteType(api.routeType, { context });
   const url = new URL(constructedUrl, urlBase.length === 0 ? undefined : urlBase);
 
   return url;

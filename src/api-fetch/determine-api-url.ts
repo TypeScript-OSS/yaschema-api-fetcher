@@ -1,16 +1,7 @@
 import isPromise from 'is-promise';
 import { type ValidationMode } from 'yaschema';
-import {
-  type AnyBody,
-  type AnyHeaders,
-  type AnyParams,
-  type AnyQuery,
-  anyReqParamsSchema,
-  anyReqQuerySchema,
-  type AnyStatus,
-  type ApiRequest,
-  type HttpApi
-} from 'yaschema-api';
+import type { AnyBody, AnyHeaders, AnyParams, AnyQuery, AnyStatus, ApiRequest, ApiRoutingContext, HttpApi } from 'yaschema-api';
+import { anyReqParamsSchema, anyReqQuerySchema } from 'yaschema-api';
 
 import { determineApiUrlUsingPreSerializedParts } from './api-fetch/internal/determine-api-url-using-pre-serialized-parts.js';
 
@@ -29,7 +20,7 @@ export const determineApiUrl = <
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: Pick<ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>, 'params' | 'query'>,
-  { validationMode }: { validationMode: ValidationMode }
+  { validationMode, context }: { validationMode: ValidationMode; context?: ApiRoutingContext }
 ): URL => {
   const [reqParams, reqQuery] = [
     (api.schemas.request.params ?? anyReqParamsSchema).serializeAsync((req.params ?? {}) as ReqParamsT, { validation: validationMode }),
@@ -40,10 +31,14 @@ export const determineApiUrl = <
     throw new Error('Use determineApiUrlAsync for async-only schemas');
   }
 
-  return determineApiUrlUsingPreSerializedParts(api, {
-    params: reqParams.serialized as AnyParams,
-    query: reqQuery.serialized as AnyQuery
-  });
+  return determineApiUrlUsingPreSerializedParts(
+    api,
+    {
+      params: reqParams.serialized as AnyParams,
+      query: reqQuery.serialized as AnyQuery
+    },
+    { context }
+  );
 };
 
 export const determineApiUrlAsync = async <
@@ -60,7 +55,7 @@ export const determineApiUrlAsync = async <
 >(
   api: HttpApi<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT, ResStatusT, ResHeadersT, ResBodyT, ErrResStatusT, ErrResHeadersT, ErrResBodyT>,
   req: Pick<ApiRequest<ReqHeadersT, ReqParamsT, ReqQueryT, ReqBodyT>, 'params' | 'query'>,
-  { validationMode }: { validationMode: ValidationMode }
+  { validationMode, context }: { validationMode: ValidationMode; context?: ApiRoutingContext }
 ): Promise<URL> => {
   const [reqParams, reqQuery] = await Promise.all([
     (api.schemas.request.params ?? anyReqParamsSchema).serializeAsync((req.params ?? {}) as ReqParamsT, {
@@ -71,5 +66,9 @@ export const determineApiUrlAsync = async <
     })
   ]);
 
-  return determineApiUrlUsingPreSerializedParts(api, { params: reqParams.serialized as AnyParams, query: reqQuery.serialized as AnyQuery });
+  return determineApiUrlUsingPreSerializedParts(
+    api,
+    { params: reqParams.serialized as AnyParams, query: reqQuery.serialized as AnyQuery },
+    { context }
+  );
 };
