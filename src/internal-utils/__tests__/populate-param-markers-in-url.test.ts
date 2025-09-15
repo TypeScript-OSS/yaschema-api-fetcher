@@ -30,6 +30,10 @@ describe('populateParamMarkersInUrl', () => {
   });
 
   it('should throw error if there are missing params', () => {
-    expect(() => populateParamMarkersInUrl('http://www.fakedomain.com/{myParam1}/{myParam2}/go', { myParam1: 'hello' })).toThrowError();
+    expect(
+      (async () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        populateParamMarkersInUrl('http://www.fakedomain.com/{myParam1}/{myParam2}/go', { myParam1: 'hello' } as any))()
+    ).rejects.toThrow();
   });
 });
